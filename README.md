@@ -121,8 +121,6 @@ Safely eject the card from your computer. With the ZX Spectrum switched off and 
 .ZXDB -s "game name"
 ```
 
-Options may be entered in lowercase or uppercase, but they must be complete one-character options. For example, `-s` and `-S` are valid, while `-search` and `-sdskd` are not.
-
 ### Help
 
 ```text
