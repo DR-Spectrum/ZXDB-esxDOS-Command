@@ -1,6 +1,6 @@
 # ZXDB
 
-ZXDB is an esxDOS dot command for ZX Spectrum computers. It searches the [ZXDB](https://spectrumcomputing.co.uk/) database through the HTTP API provided by [Remy Sharp](https://zxdb.remysharp.com/) and downloads the selected game directly to the SD card through an esxDOS-compatible device with an ESP8266 WIFI interface, such as DivTiesus.
+ZXDB is an esxDOS dot command for ZX Spectrum computers equipped with [DivTiesus](https://www.zxprojects.com/divtiesus/). It searches the [ZXDB](https://spectrumcomputing.co.uk/) database through the HTTP API provided by [Remy Sharp](https://zxdb.remysharp.com/) and downloads the selected game directly to the SD card over the DivTiesus ESP8266 Wi-Fi interface.
 
 ## Features
 
@@ -9,16 +9,16 @@ ZXDB is an esxDOS dot command for ZX Spectrum computers. It searches the [ZXDB](
 - Show the game title, year, file type and 48K/128K model when available.
 - Download TAP, TZX, Z80 and other supported file formats.
 - Show the current Wi-Fi status, SSID, IP address and MAC address.
-- Attempt to reconnect the ESP8266 automatically if the Wi-Fi connection has been lost.
+- Attempt to reconnect the DivTiesus ESP8266 automatically if the Wi-Fi connection has been lost.
 
 ## Requirements
 
-- A ZX Spectrum compatible with esxDOS devices.
+- A ZX Spectrum compatible with DivTiesus.
 - An SD card with esxDOS.
-- An esxDOS-compatible device with an ESP8266, such as DivTiesus.
+- A [DivTiesus](https://www.zxprojects.com/divtiesus/) interface with its ESP8266 Wi-Fi module.
 - [sjasmplus](https://github.com/z00m128/sjasmplus) to compile the source code.
 
-ZXDB uses plain HTTP because the ESP8266 AT firmware used by the project cannot establish the TLS connection required by some other APIs.
+ZXDB communicates directly with the DivTiesus UART through ports `$FC3B` and `$FD3B`. Compatibility with other esxDOS or ESP8266 devices is not currently guaranteed. It uses plain HTTP because the ESP8266 AT firmware used by the project cannot establish the TLS connection required by some other APIs.
 
 ## Project structure
 
@@ -111,7 +111,7 @@ BIN/
 └── ZXDB
 ```
 
-Safely eject the card from your computer. With the ZX Spectrum switched off and unplugged from the mains, insert the card into the SD or microSD card slot of the esxDOS-compatible device connected to the ZX Spectrum. Reconnect the power and switch on the computer. Once esxDOS is running, configure the Wi-Fi connection with `.wconf` if it has not already been configured. The command can then be executed as `.ZXDB` from BASIC.
+Safely eject the card from your computer. With the ZX Spectrum switched off and unplugged from the mains, insert the card into the SD or microSD card slot of the DivTiesus connected to the ZX Spectrum. Reconnect the power and switch on the computer. Once esxDOS is running, configure the DivTiesus Wi-Fi connection with its `.wconf` utility if it has not already been configured. The command can then be executed as `.ZXDB` from BASIC.
 
 ## Usage
 
@@ -144,7 +144,7 @@ IP: 192.168.1.45
 MAC: 24:d7:eb:c8:xx:xx
 ```
 
-If the connection has been lost, ZXDB asks the ESP8266 to reconnect using its stored Wi-Fi credentials. If Wi-Fi has not been configured, run:
+If the connection has been lost, ZXDB asks the DivTiesus ESP8266 to reconnect using its stored Wi-Fi credentials. If Wi-Fi has not been configured, use the DivTiesus configuration utility:
 
 ```text
 .wconf
@@ -207,7 +207,7 @@ Downloaded files are saved in the current esxDOS directory. Since esxDOS uses 8.
 
 ## Typical workflow
 
-1. Configure the Wi-Fi connection with `.wconf` if necessary.
+1. Configure the DivTiesus Wi-Fi connection with `.wconf` if necessary.
 2. Check the connection with `.ZXDB -i`.
 3. Search for a game with `.ZXDB -s "game name"`.
 4. Press the number corresponding to the desired result.
@@ -217,11 +217,11 @@ Downloaded files are saved in the current esxDOS directory. Since esxDOS uses 8.
 
 ### `Error: No WIFI network. Run .wconf`
 
-The ESP8266 has no usable Wi-Fi connection. Configure the network with `.wconf` and try again. If it was previously configured, make sure the access point is available; ZXDB will attempt an automatic reconnection.
+The DivTiesus ESP8266 has no usable Wi-Fi connection. Configure the network with the DivTiesus `.wconf` utility and try again. If it was previously configured, make sure the access point is available; ZXDB will attempt an automatic reconnection.
 
 ### `Error: UART doesn't respond`
 
-ZXDB cannot communicate with the ESP8266. Check the connection, power and UART configuration of the esxDOS-compatible device with an ESP8266, such as DivTiesus.
+ZXDB cannot communicate with the DivTiesus ESP8266. Check that DivTiesus is connected correctly and that its Wi-Fi module is powered and operational.
 
 ### `Error: cannot connect to zxdb.remysharp.com`
 
