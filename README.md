@@ -20,15 +20,33 @@ ZXDB is an esxDOS dot command for ZX Spectrum computers. It searches the [ZXDB](
 
 ZXDB uses plain HTTP because the ESP8266 AT firmware used by the project cannot establish the TLS connection required by some other APIs.
 
-## Compiling
+## Project structure
 
-Place `ZXDB.asm` in your working directory and run:
+The repository is organised as follows:
 
-```bash
-sjasmplus ZXDB.asm --raw=ZXDB --nologo
+```text
+ZXDB-esxDOS-Command/
+├── .vscode/
+│   └── tasks.json
+├── bin/
+│   └── ZXDB
+├── src/
+│   └── ZXDB.asm
+└── README.md
 ```
 
-The compilation produces a binary file named `ZXDB` without an extension. This is the esxDOS dot command; `ZXDB.asm` is only the source file.
+The `src` directory contains the Z80 assembly source code. The compiled esxDOS dot command is written to `bin/ZXDB`. The `bin` directory must exist before compiling.
+
+## Compiling
+
+From the root of the repository, change to the `src` directory and run:
+
+```bash
+cd src
+sjasmplus ZXDB.asm --nologo
+```
+
+The `OUTPUT "../bin/ZXDB"` directive in `ZXDB.asm` produces a binary file named `ZXDB`, without an extension, inside the `bin` directory. This is the esxDOS dot command; `src/ZXDB.asm` is only the source file.
 
 If `sjasmplus` is not available from the command line, add its directory to your system `PATH` or run it using its complete path.
 
@@ -36,7 +54,7 @@ If `sjasmplus` is not available from the command line, add its directory to your
 
 Visual Studio Code can run `sjasmplus` through a build task:
 
-1. Open the folder containing `ZXDB.asm` in Visual Studio Code.
+1. Open the root folder of the repository in Visual Studio Code.
 2. Create a folder named `.vscode` in the root of the project.
 3. Inside `.vscode`, create a file named `tasks.json`.
 4. Add the following configuration:
@@ -51,7 +69,6 @@ Visual Studio Code can run `sjasmplus` through a build task:
             "command": "C:/Tools/sjasmplus/sjasmplus.exe",
             "args": [
                 "${fileBasename}",
-                "--raw=${fileBasenameNoExtension}",
                 "--nologo"
             ],
             "options": {
@@ -75,11 +92,13 @@ The file must be stored at this location relative to the project folder:
 .vscode/tasks.json
 ```
 
-Open `ZXDB.asm` in the editor and press `Ctrl+Shift+B`, or select **Terminal > Run Build Task**. Because this is the default build task, Visual Studio Code compiles the active source file and creates the `ZXDB` dot command in the same directory as `ZXDB.asm`.
+Open `src/ZXDB.asm` in the editor and press `Ctrl+Shift+B`, or select **Terminal > Run Build Task**. Because `${fileDirname}` is used as the working directory, Visual Studio Code runs the assembler from `src`. The `OUTPUT "../bin/ZXDB"` directive then creates or replaces `bin/ZXDB`.
+
+Do not add a `--raw` argument to `tasks.json`. Combining `--raw` with the `OUTPUT` directive may generate an additional binary in `src` or attempt to produce the same output twice.
 
 ## Installing
 
-Copy the compiled `ZXDB` file—not `ZXDB.asm`—to the `BIN` directory on the esxDOS SD card:
+Copy the compiled `bin/ZXDB` file—not `src/ZXDB.asm`—to the `BIN` directory on the esxDOS SD card:
 
 ```text
 /BIN/ZXDB

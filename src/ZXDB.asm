@@ -3,7 +3,7 @@
 ; Busca y descarga juegos en formatos TAP, TZX, Z80, etc.
 ; desde http://zxdb.remysharp.com
 ; Hardware: ZX Spectrum + DivTiesus (ESP8266 UART $FC3B/$FD3B)
-; Compilar: sjasmplus ZXDB.asm --raw=ZXDB --nologo
+; Compilar desde src: sjasmplus ZXDB.asm --nologo
 ;
 ; Uso: .ZXDB -h | .ZXDB -i | .ZXDB -s "manic miner"
 ; API: ^id^titulo^fichero^tamano^opciones^anio^
@@ -13,7 +13,7 @@
 ; https://github.com/nihirash/netman-zx
 ; ============================================================================
 
-        OUTPUT "ZXDB"
+        OUTPUT "../bin/ZXDB"
         ORG $2000
 
 ZXUNO_ADDR      EQU $FC3B
@@ -24,6 +24,7 @@ F_OPEN          EQU $9A
 F_CLOSE         EQU $9B
 F_WRITE         EQU $9E
 SCR_CT          EQU $5C8C       ; Contador antes de mostrar "scroll?".
+DF_CC           EQU $5C84       ; Direccion de pantalla del siguiente caracter.
 
 HTTP_BUF        EQU $C000       ; Peticion HTTP
 DOWNLOAD_BUF    EQU $B000       ; Bloque de escritura SD de 512 bytes
@@ -830,11 +831,11 @@ print_search_result:
         call print_machine_hint
         ld hl, txt_type_open
         call print_string
+        call print_open_bracket
         ld a, (result_count)
         call get_name_slot
         call print_filename_type
-        ld a, ']'
-        rst $10
+        call print_close_bracket
         ld hl, txt_year_open
         call print_string
         ld hl, year_buffer
@@ -959,12 +960,50 @@ print_machine_hint:
         or a
         ret z
         cp 2
-        jr z, .show_128
         ld hl, txt_machine_48
-        jp print_string
-.show_128:
+        jr nz, .selected
         ld hl, txt_machine_128
-        jp print_string
+.selected:
+        push hl
+        ld a, ' '
+        rst $10
+        call print_open_bracket
+        pop hl
+        call print_string
+        jp print_close_bracket
+
+; Dibuja los corchetes directamente en pantalla. RST $10 imprime un espacio
+; para avanzar el cursor y aplicar el atributo actual; despues se sustituye su
+; bitmap. No depende de la fuente, de los UDG ni del idioma de la ROM.
+print_open_bracket:
+        ld de, bracket_open_bitmap
+        jr print_custom_bracket
+
+print_close_bracket:
+        ld de, bracket_close_bitmap
+
+print_custom_bracket:
+        push af
+        push bc
+        push de
+        push hl
+        ld hl, (DF_CC)          ; Celda que va a ocupar el espacio.
+        push hl
+        ld a, ' '
+        rst $10
+        pop hl
+        ld b, 8
+.draw:
+        ld a, (de)
+        ld (hl), a
+        inc de
+        inc h                    ; Siguiente linea de pixeles de la celda.
+        djnz .draw
+        pop hl
+        pop de
+        pop bc
+        pop af
+        ret
 
 filename_contains_128:
 .loop:
@@ -2196,13 +2235,19 @@ txt_reconnecting_wifi: db "Reconnecting WIFI...",13,0
 txt_ssid_label:     db "SSID: ",0
 txt_ip_label:       db "IP: ",0
 txt_mac_label:      db "MAC: ",0
-txt_type_open:      db " [",0
+txt_type_open:      db " ",0
 txt_type_unknown:   db "???",0
 txt_details_indent: db "   ",0
-txt_machine_48:     db " [48]",0
-txt_machine_128:    db " [128]",0
+txt_machine_48:     db "48",0
+txt_machine_128:    db "128",0
 txt_year_open:      db " (",0
-txt_select:         db 13,"Select 1-9/0 (BREAK to cancel): ",0
+
+; Bitmaps 8x8 usados por el dibujado directo en pantalla.
+bracket_open_bitmap:
+                    db $38,$20,$20,$20,$20,$20,$20,$38
+bracket_close_bitmap:
+                    db $38,$08,$08,$08,$08,$08,$08,$38
+txt_select:         db 13,"Select 1-9/0 (BREAK cancels): ",0
 txt_cancelled:      db "Cancelled",13,0
 txt_saving:         db "Saving: ",0
 txt_progress:       db "Progress:   0%",0
