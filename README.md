@@ -15,10 +15,10 @@ ZXDB is an esxDOS dot command for ZX Spectrum computers equipped with [DivTiesus
 
 - A ZX Spectrum compatible with DivTiesus.
 - An SD card with esxDOS.
-- A [DivTiesus](https://www.zxprojects.com/divtiesus/) interface with its ESP8266 Wi-Fi module.
+- A [DivTiesus](https://www.zxprojects.com/divtiesus/) DivMMC with its ESP8266 Wi-Fi module.
 - [sjasmplus](https://github.com/z00m128/sjasmplus) to compile the source code.
 
-ZXDB communicates directly with the DivTiesus UART through ports `$FC3B` and `$FD3B`. Compatibility with other esxDOS or ESP8266 devices is not currently guaranteed. It uses plain HTTP because the ESP8266 AT firmware used by the project cannot establish the TLS connection required by some other APIs.
+ZXDB communicates directly with the DivTiesus UART through ports `$FC3B` and `$FD3B`. Compatibility with other esxDOS or ESP8266 devices is not currently guaranteed.
 
 ## Project structure
 
@@ -204,6 +204,8 @@ Progress: 57%
 ```
 
 Downloaded files are saved in the current esxDOS directory. Since esxDOS uses 8.3 filenames, long source names are shortened. If the destination filename already exists, ZXDB changes the final character of the base name to a number so that the existing file is not overwritten.
+
+**Important:** DivTiesus is not compatible with the `.tzx` format. Only games in `.tap`, `.z80`, `.sna` and `.rom` formats can be executed directly with DivTiesus.
 
 ## Typical workflow
 
