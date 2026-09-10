@@ -111,7 +111,7 @@ BIN/
 └── ZXDB
 ```
 
-Safely eject the card from your computer. With the ZX Spectrum switched off and unplugged from the mains, insert the card into the SD or microSD card slot of the DivTiesus connected to the ZX Spectrum. Reconnect the power and switch on the computer. Once esxDOS is running, configure the DivTiesus Wi-Fi connection with its `.wconf` utility if it has not already been configured. The command can then be executed as `.ZXDB` from BASIC.
+Safely eject the card from your computer. With the ZX Spectrum switched off and unplugged from the mains, insert the card into the SD or microSD card slot of the DivTiesus connected to the ZX Spectrum. Reconnect the power and switch on the computer. Once esxDOS is running, configure the DivTiesus Wi-Fi connection with its `.WCONF` utility if it has not already been configured. The command can then be executed as `.ZXDB` from BASIC.
 
 ## Usage
 
@@ -147,7 +147,7 @@ MAC: 24:d7:eb:c8:xx:xx
 If the connection has been lost, ZXDB asks the DivTiesus ESP8266 to reconnect using its stored Wi-Fi credentials. If Wi-Fi has not been configured, use the DivTiesus configuration utility:
 
 ```text
-.wconf
+.WCONF
 ```
 
 ### Searching and downloading
@@ -209,7 +209,7 @@ Downloaded files are saved in the current esxDOS directory. Since esxDOS uses 8.
 
 ## Typical workflow
 
-1. Configure the DivTiesus Wi-Fi connection with `.wconf` if necessary.
+1. Configure the DivTiesus Wi-Fi connection with `.WCONF` if necessary.
 2. Check the connection with `.ZXDB -i`.
 3. Search for a game with `.ZXDB -s "game name"`.
 4. Press the number corresponding to the desired result.
@@ -217,9 +217,9 @@ Downloaded files are saved in the current esxDOS directory. Since esxDOS uses 8.
 
 ## Troubleshooting
 
-### `Error: No WIFI network. Run .wconf`
+### `Error: No WIFI network. Run .WCONF`
 
-The DivTiesus ESP8266 has no usable Wi-Fi connection. Configure the network with the DivTiesus `.wconf` utility and try again. If it was previously configured, make sure the access point is available; ZXDB will attempt an automatic reconnection.
+The DivTiesus ESP8266 has no usable Wi-Fi connection. Configure the network with the DivTiesus `.WCONF` utility and try again. If it was previously configured, make sure the access point is available; ZXDB will attempt an automatic reconnection.
 
 ### `Error: UART doesn't respond`
 
